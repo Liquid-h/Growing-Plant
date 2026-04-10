@@ -5,50 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grow_Your_Plants</title>
     <style>
-        .word
-        {
-            color : #ffffff;
-            position: absolute;
-            top: -20px;
-        }
-        
-        /* 아스키 아트를 위한 설정 */
-        pre 
-        {
-            font-family: 'Courier New', Courier, monospace; /* 고정폭 글꼴 (필수: 안하면 새싹 터짐) */
-            font-size: 12px;         /* 폰트 크기 */
-            line-height: 1.1;        /* 줄 간격 좁게 */
-            text-align: left;        /* 아스키 아트 자체는 왼쪽 정렬 유지 */
-        }
-
-        body 
-        {
+        body {
             display: flex;
             justify-content: center; /* 가로 가운데 정렬 */
             align-items: center;     /* 세로 가운데 정렬 */
-            height: 100vh;         /* 화면 전체 높이 */
+            height: 100vh;           /* 화면 전체 높이 */
             margin: 0;
             background-color: #121212;
-            color: #4CAF50; /*식물 색깔, plant color */
+            color: #4CAF50;          /* 식물 색깔, plant color */
+            flex-direction: column;  /* 요소들을 위아래로 배치 */
+        }
 
-            .sprout-container 
-            {
-                position: relative;
-            }
+        .sprout-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .word {
+            color: #ffffff;
+            position: absolute;
+            top: -30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+        
+        /* 아스키 아트를 위한 설정 */
+        pre {
+            font-family: 'Courier New', Courier, monospace; /* 고정폭 글꼴 (필수: 안하면 새싹 터짐) */
+            font-size: 8px;          /* 12px에서 8px로 크기 축소 */
+            line-height: 1.1;        /* 줄 간격 좁게 */
+            text-align: left;        /* 아스키 아트 자체는 왼쪽 정렬 유지 */
+            margin: 0;
+        }
+
+        /* 네온 초록색 버튼 스타일 */
+        button {
+            margin-top: 40px;
+            width: 140px;
+            height: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #121212; /* 배경색과 동일하게 */
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            cursor: pointer;
+            /* 네온 빛 효과 */
+            box-shadow: 0 0 10px #4CAF50, inset 0 0 5px #4CAF50;
+            text-shadow: 0 0 5px #4CAF50;
+            transition: all 0.2s ease-in-out;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #4CAF50;
+            color: #121212;
+            box-shadow: 0 0 20px #4CAF50, inset 0 0 10px #4CAF50;
+            text-shadow: none;
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        /* 물을 이미 줬을 때(비활성화)의 스타일 */
+        button:disabled {
+            border-color: #555555;
+            color: #555555;
+            box-shadow: none;
+            text-shadow: none;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-            <div class="sprout-container">
+    <div class="sprout-container">
+        <div class="word" id="statusWord">hmmmmmmm......🤨</div>
         
-            <div class="word">hmmmmmmm......🤨</div>
-            <div></div>
-    
-    <pre>
+<pre>
  ==============                                                                                     
- ====+=================                                                                             
- ======++==================                                                                         
- ========++====================                                                                     
+ ====+=================                                                                              
+ ======++==================                                                                        
+ ========++====================                                                                      
  ==========+++====================                                                                  
   ===========+++====================                                                                
   =============++++===================                                                              
@@ -56,7 +96,7 @@
    ================++++=================                                                            
     =================++++================                                                           
     ==================+++++===============                                                          
-    ====================++++==============                                                          
+    ====================++++==============                                                           
      =====================++++=============                                                         
       =====================+++++===========                                                         
       =======================++++==========                                                         
@@ -79,19 +119,67 @@
                                             ****##         =============================            
                                             ****##            =======================               
                                             ****##                ===============                   
-                                            ****##                                                  
-                                            ****##                                                  
-                                            ****##                                                  
-                                            ****##                                                  
-                                            ****##                                                  
-                                            ****##                                                  
-                                           *****##                                                  
-                                           *****#                                                   
-                                           *****#                                                   
-                                           *****#                                                   
-                                          ******#                                                   
-                                         *******#                                                   
-    </pre>
+                                            ****##                                                   
+                                            ****##                                                   
+                                            ****##                                                   
+                                            ****##                                                   
+                                            ****##                                                   
+                                            ****##                                                   
+                                           *****##                                                   
+                                           *****#                                                    
+                                           *****#                                                    
+                                           *****#                                                    
+                                          ******#                                                    
+                                         *******#                                                    
+</pre>
 
+        <!-- 물 주기 버튼 -->
+        <button id="waterBtn" onclick="giveWater()">Water Drop 💧</button>
+    </div>
+
+    <script>
+        // 오늘 날짜를 'YYYY-MM-DD' 형식으로 가져오는 함수
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // 화면 상태 업데이트 함수
+        function updateStatus() {
+            const lastWateredDate = localStorage.getItem('lastWateredDate');
+            const today = getTodayDate();
+            const waterBtn = document.getElementById('waterBtn');
+            const statusWord = document.getElementById('statusWord');
+
+            if (lastWateredDate === today) {
+                // 오늘 이미 물을 준 경우 (버튼 비활성화)
+                waterBtn.disabled = true;
+                waterBtn.innerText = "Done! 💤";
+                statusWord.innerText = "yummy! 😋💧"; // 머리 위 텍스트 변경
+            } else {
+                // 오늘 물을 아직 안 준 경우
+                waterBtn.disabled = false;
+                waterBtn.innerText = "Water Drop 💧";
+                statusWord.innerText = "hmmmmmmm......🤨";
+            }
+        }
+
+        // 물 주기 버튼 클릭 시 실행되는 함수
+        function giveWater() {
+            const today = getTodayDate();
+            
+            // 오늘 날짜를 저장소에 기록
+            localStorage.setItem('lastWateredDate', today);
+            
+            // 버튼 상태 즉시 업데이트
+            updateStatus();
+        }
+
+        // 웹페이지가 처음 켜질 때 상태 확인
+        window.onload = updateStatus;
+    </script>
 </body>
 </html>
